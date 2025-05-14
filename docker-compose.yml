@@ -1,0 +1,47 @@
+version: "3"
+services:
+    frontend:
+      environment: 
+         REACT_APP_HOST_SERVER: 192.168.2.212
+         REACT_APP_PORT_SERVER: 5006
+         PORT: 3006
+      build:
+        context: ./client
+        dockerfile: Dockerfile
+      container_name: cont-frontend-multilevel-prod-0.0.1
+      image: img-frontend-multilevel-prod:0.0.1
+      restart: always
+      ports:
+        - "3006:80"
+    backend:
+      environment:
+        PORT: 5006
+      build:
+        context: ./server
+        dockerfile: Dockerfile
+      container_name: cont-backend-multilevel-prod-0.0.1
+      image: img-backend-multilevel-prod:0.0.1
+      restart: always
+      ports:
+          - "5006:5006"
+    db-boms:
+        image: postgres
+        restart: always
+        # set shared memory limit when using docker-compose
+        shm_size: 128mb
+        # or set shared memory limit when deploy via swarm stack
+        #volumes:
+        #  - type: tmpfs
+        #    target: /dev/shm
+        #    tmpfs:
+        #      size: 134217728 # 128*2^20 bytes = 128Mb
+        ports:
+          - 5432:5432
+        environment:
+          POSTGRES_PASSWORD: Ekd2019.
+
+    adminer:
+      image: adminer
+      restart: always
+      ports:
+        - 8080:8080
