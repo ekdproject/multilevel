@@ -109,14 +109,18 @@ export const getBomByElement = async (req: Request, res: Response) => {
     let response = await bomExplodedRepository.query(`select * from bom_exploded order by lev,padre,elemento`)
 
     const withCliCode = response.map(async (element: any) => {
-        const getCodiceCliente = await GetCodiceCliente(element.elemento)
-       
+        const getCodiceClienteElemento: any = await GetCodiceCliente(element.elemento)
+        const getCodiceClientePadre: any = await GetCodiceCliente(element.padre)
+        const getCodiceClienteComplessivo: any = await GetCodiceCliente(element.complessivo)
+
 
         return {
             ...element,
             qty_db:Number(element.qty_db).toLocaleString('it-IT'),
             qty:Number(element.qty).toLocaleString('it-IT'),
-            cod_cli: getCodiceCliente,
+            cod_cli_complessivo: getCodiceClienteComplessivo.CodiceCliente,
+            cod_cli_padre: getCodiceClientePadre.CodiceCliente,
+            cod_cli_elemento: getCodiceClienteElemento.CodiceCliente,
             ITMDES1_0: element.ITMDES1_0,
             ITMDES2_0: element.ITMDES2_0,
             ITMDES3_0: element.ITMDES3_0
